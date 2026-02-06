@@ -8,6 +8,8 @@ dependencies = [
   "streamlit",
 
   # GitHub dependencies
-  "polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph",
+  # torch (transitive via sentence-transformers) has no macOS x86_64 wheel,
+  # so gate this on Linux where Streamlit Cloud actually runs.
+  "polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph ; sys_platform == 'linux'",
   "valency-anndata @ git+https://github.com/patcon/valency-anndata@main",
 ]
