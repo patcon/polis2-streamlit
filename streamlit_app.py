@@ -20,16 +20,18 @@ st.markdown(
 )
 
 # ----------------------------
-# Inputs
+# Inputs (pre-filled from ?report=...&lang=... query params)
 # ----------------------------
+params = st.query_params
+
 report_url = st.text_input(
     "Pol.is report URL",
-    value="https://pol.is/report/r4zdxrdscmukmkakmbz3k",
+    value=params.get("report", "https://pol.is/report/r4zdxrdscmukmkakmbz3k"),
 )
 
 translate_to = st.text_input(
     "Translate to language (2-letter code, e.g. `en`, `fr`). Leave blank to skip.",
-    value="",
+    value=params.get("lang", ""),
     max_chars=2,
 )
 
