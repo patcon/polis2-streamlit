@@ -23,7 +23,7 @@ st.markdown(
 # ----------------------------
 report_url = st.text_input(
     "Pol.is report URL",
-    value="https://pol.is/report/r7wehfsmutrwndviddnii",
+    value="https://pol.is/report/r4zdxrdscmukmkakmbz3k",
 )
 
 run = st.button("Run analysis")
