@@ -73,6 +73,7 @@ if run:
         darkmode=True,
         height=600,
         palette_theta_range=np.pi / 8,
+        point_radius_min_pixels=8,
     )
 
     components.html(fig._html_str, height=620, scrolling=True)
