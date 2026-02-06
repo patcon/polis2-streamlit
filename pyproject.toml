@@ -6,6 +6,8 @@ requires-python = ">=3.10"
 
 dependencies = [
   "streamlit",
+  "datamapplot",
+  "numpy",
 
   # GitHub dependencies
   # torch (transitive via sentence-transformers) has no macOS x86_64 wheel,

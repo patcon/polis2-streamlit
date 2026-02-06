@@ -1,5 +1,8 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import valency_anndata as val
+import datamapplot
+import numpy as np
 
 st.set_page_config(
     page_title="Pol.is → Polis2 Statements",
@@ -10,11 +13,9 @@ st.title("Pol.is Report → Polis2 Statements Explorer")
 
 st.markdown(
     """
-    Paste a **Pol.is report URL** (e.g. `https://pol.is/report/xxxx`)  
-    This app will:
-    - Load the report
-    - Run the Polis2 statements recipe
-    - Show embeddings and diagnostics
+    Paste a **Pol.is report URL** (e.g. `https://pol.is/report/xxxx`)
+    This app will load the report, run the Polis2 statements recipe,
+    and render an interactive datamapplot.
     """
 )
 
@@ -48,46 +49,33 @@ if run:
 
     st.success(f"Loaded report with {adata.shape[1]} statements")
 
-    # ----------------------------
-    # Run recipe
-    # ----------------------------
-    st.subheader("Polis2 Statements Recipe")
-
     with st.spinner("Running recipe_polis2_statements…"):
-        with val.viz.schematic_diagram(diff_from=adata):
-            val.tools.recipe_polis2_statements(adata)
-
-    st.caption("Schematic diagram shows transformations applied to the AnnData object.")
+        val.tools.recipe_polis2_statements(adata)
 
     # ----------------------------
-    # Embedding plot
+    # Interactive datamapplot
     # ----------------------------
-    st.subheader("Statement Embedding")
+    st.subheader("Statement Map")
 
-    fig = val.viz.embedding(
-        adata.transpose(),
-        basis="content_umap",
-        color=["evoc_polis2_top", "moderation_state"],
-        return_fig=True,  # important for Streamlit
+    label_layers = adata.varm["evoc_polis2"].transpose()
+    label_layers_humanized = [
+        [f"Zoom{zoom_level}:Group{group_id}" for group_id in row]
+        for zoom_level, row in enumerate(reversed(label_layers), start=1)
+    ]
+
+    fig = datamapplot.create_interactive_plot(
+        adata.varm["content_umap"],
+        *label_layers_humanized,
+        title=f"Polis Report",
+        sub_title=f"{adata.shape[1]} statements",
+        hover_text=adata.var["content"],
+        enable_search=True,
+        darkmode=True,
+        height=600,
+        palette_theta_range=np.pi / 8,
     )
 
-    st.pyplot(fig, use_container_width=True)
-
-    # ----------------------------
-    # Datamapplot (placeholder)
-    # ----------------------------
-    st.subheader("Cluster Overview (Datamapplot)")
-
-    st.info(
-        "Interactive datamapplot rendering is not yet Streamlit-native. "
-        "Showing a placeholder image for now."
-    )
-
-    st.image(
-        "https://i.imgur.com/CMiO6nu.png",
-        caption="Example datamapplot output",
-        use_container_width=True,
-    )
+    components.html(fig._html_str, height=620, scrolling=True)
 
     # ----------------------------
     # Optional: show raw tables
