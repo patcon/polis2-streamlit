@@ -27,14 +27,23 @@ report_url = st.text_input(
     value="https://pol.is/report/r4zdxrdscmukmkakmbz3k",
 )
 
+translate_to = st.text_input(
+    "Translate to language (2-letter code, e.g. `en`, `fr`). Leave blank to skip.",
+    value="",
+    max_chars=2,
+)
+
 run = st.button("Run analysis")
 
 # ----------------------------
 # Cached loader
 # ----------------------------
 @st.cache_data(show_spinner=True)
-def load_polis_report(url: str):
-    return val.datasets.polis.load(url)
+def load_polis_report(url: str, translate_to: str | None = None):
+    kwargs = {}
+    if translate_to:
+        kwargs["translate_to"] = translate_to
+    return val.datasets.polis.load(url, **kwargs)
 
 # ----------------------------
 # Main logic
@@ -45,7 +54,7 @@ if run:
         st.stop()
 
     with st.spinner("Loading Pol.is report…"):
-        adata = load_polis_report(report_url)
+        adata = load_polis_report(report_url, translate_to=translate_to.strip() or None)
 
     st.success(f"Loaded report with {adata.shape[1]} statements")
 
