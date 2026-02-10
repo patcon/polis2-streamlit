@@ -30,12 +30,13 @@ report_url = st.text_input(
 )
 
 translate_to = st.text_input(
-    "Translate to language (2-letter code, e.g. `en`, `fr`). Leave blank to skip.",
+    "Translate to language (e.g. `en`, `fr`, `zh-TW`). Leave blank to skip.",
     value=params.get("lang", ""),
-    max_chars=2,
+    max_chars=5,
 )
 
 run = st.button("Run analysis")
+st.caption("Tip: pre-fill inputs via query string, e.g. `?report=...&lang=zh-TW`")
 
 # ----------------------------
 # Cached loader
