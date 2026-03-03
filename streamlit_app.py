@@ -35,6 +35,7 @@ translate_to = st.text_input(
     max_chars=5,
 )
 
+skip_cache = st.checkbox("Skip cache", value=False)
 run = st.button("Run analysis")
 st.caption("Tip: pre-fill inputs via query string, e.g. `?report=...&lang=zh-TW`")
 
@@ -42,11 +43,11 @@ st.caption("Tip: pre-fill inputs via query string, e.g. `?report=...&lang=zh-TW`
 # Cached loader
 # ----------------------------
 @st.cache_data(show_spinner=True)
-def load_polis_report(url: str, translate_to: str | None = None):
+def load_polis_report(url: str, translate_to: str | None = None, skip_cache: bool = False):
     kwargs = {}
     if translate_to:
         kwargs["translate_to"] = translate_to
-    return val.datasets.polis.load(url, **kwargs)
+    return val.datasets.polis.load(url, skip_cache=skip_cache, **kwargs)
 
 # ----------------------------
 # Main logic
@@ -57,7 +58,7 @@ if run:
         st.stop()
 
     with st.spinner("Loading Pol.is report…"):
-        adata = load_polis_report(report_url, translate_to=translate_to.strip() or None)
+        adata = load_polis_report(report_url, translate_to=translate_to.strip() or None, skip_cache=skip_cache)
 
     n_statements = adata.shape[1]
     st.success(f"Loaded report with {n_statements} statements")
