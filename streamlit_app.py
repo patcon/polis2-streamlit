@@ -57,6 +57,9 @@ if run:
         st.error("Please enter a Pol.is report URL.")
         st.stop()
 
+    if skip_cache:
+        load_polis_report.clear()
+
     with st.spinner("Loading Pol.is report…"):
         adata = load_polis_report(report_url, translate_to=translate_to.strip() or None, skip_cache=skip_cache)
 
