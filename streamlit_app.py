@@ -59,7 +59,15 @@ if run:
     with st.spinner("Loading Pol.is report…"):
         adata = load_polis_report(report_url, translate_to=translate_to.strip() or None)
 
-    st.success(f"Loaded report with {adata.shape[1]} statements")
+    n_statements = adata.shape[1]
+    st.success(f"Loaded report with {n_statements} statements")
+
+    if n_statements < 20:
+        st.error(
+            f"This report only has {n_statements} statements. "
+            "At least 20 are needed for the clustering pipeline to run."
+        )
+        st.stop()
 
     with st.spinner("Running recipe_polis2_statements…"):
         val.tools.recipe_polis2_statements(adata)
